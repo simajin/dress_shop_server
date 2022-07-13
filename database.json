@@ -1,0 +1,7 @@
+{
+    "host": "dress-data.cdtmdsnqpirx.us-east-1.rds.amazonaws.com",
+    "user": "admin",
+    "password": "front303",
+    "port": "3306",
+    "database": "dresses"
+}
