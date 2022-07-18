@@ -18,7 +18,28 @@ const connection = mysql.createConnection({
 app.use(express.json()) //json형식의 데이터를 처리할수 있도록설정
 app.use(cors()) //브라우저의 다양한 사용을 위해 설정
 
-
+// 전체상품
+app.get('/dresses', async (req, res)=>{
+    connection.query(
+        "select * from dress_table",
+        (err, rows, fields)=>{
+            res.send(rows);
+            console.log(err);
+            console.log(fields);
+        }
+    )
+})
+//상품 하나씩
+app.get('/dress/:id', async (req, res)=>{
+    const params = req.params;
+    connection.query(
+        `select * from dress_table where id=${params.id}`,
+        (err, rows, fields)=>{
+            res.send(rows);
+            console.log(fields);
+        }
+    )
+})
 
 // 서버실행
 app.listen(port, () => {
