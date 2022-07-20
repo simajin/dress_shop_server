@@ -28,3 +28,15 @@
 //     res.end()
 // })
 
+
+// 
+// app.post('/login',function(req,res){
+//     db.collection('post').findOne({id:req.body.id},function(error,result){
+//       console.log(result.id)
+//       if(result.id == req.body.id ){res.send('중복된 아이디입니다.')}
+//       else{db.collection('post').insertOne({id:req.body.id, pw:req.body.pw} , function(error,result){
+//         console.log(result)
+//         res.redirect('/');
+//       })}
+//     })
+//   })
