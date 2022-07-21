@@ -33,6 +33,7 @@ app.get('/dresses', async (req, res)=>{
         }
     )
 })
+
 //상품 하나씩
 app.get('/dress/:id', async (req, res)=>{
     const params = req.params;
@@ -44,29 +45,28 @@ app.get('/dress/:id', async (req, res)=>{
         }
     )
 })
-// 회원가입 - 클라이언트에서 값을 받아오기
-// app.post('/register', (req,res,next) =>{
-// 	console.log(req.body)
-//     res.end()
-// })
 
-// 코드 작성
+//서치 타입
+app.get('/dress/:type', async (req, res)=>{
+    const params = req.params;
+    connection.query(
+        `select * from dress_table where type=${params.type}`,
+        (err, rows, fields)=>{
+            res.send(rows);
+            console.log(fields);
+        }
+    )
+})
+
+// 카트 
+
+
+// 회원가입 - 클라이언트에서 값을 받아오기
 // db(데이터베이스)에 회원정보 업로드되게 하기
 // const db = require('./database.json')
 // 비밀번호 보안 - bcrypt 사용(bcrypt에서 제공하는 hash 함수를 사용)
 const bcrypt = require('bcrypt')
 const saltRounds = 10       // saltRounds : 암호화를 몇번 진행할 것인지
-
-// app.post('/login',function(req,res){
-//     db.collection('post').findOne({id:req.body.id},function(error,result){
-//       console.log(result.id)
-//       if(result.id == req.body.id ){res.send('중복된 아이디입니다.')}
-//       else{db.collection('post').insertOne({id:req.body.id, pw:req.body.pw} , function(error,result){
-//         console.log(result)
-//         res.redirect('/');
-//       })}
-//     })
-//   })
 
 app.post('/register', async (req,res,next) =>{
 	const param = [req.body.c_id, req.body.c_password, req.body.c_name, req.body.c_gender, req.body.c_phone, req.body.c_phone2, req.body.c_phone3, req.body.c_add, req.body.c_adddetail, req.body.c_email] 
@@ -80,7 +80,7 @@ app.post('/register', async (req,res,next) =>{
         // connection.query(query, function(error, result){
         //     console.log(result.id)
         // })
-        // 쿼리문 작성\
+        // 쿼리문 작성
         console.log("여기에요!!!!")
         console.log(param)
         connection.query('INSERT INTO member(`userid`,`pw`,`name`,`gender`,`phone`,`phone2`,`phone3`,`add`,`adddetail`,`email`) VALUES (?,?,?,?,?,?,?,?,?,?)' , 
