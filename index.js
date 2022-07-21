@@ -38,7 +38,6 @@ app.get('/dresses', async (req, res)=>{
     )
 })
 
-
 //2. 상품 하나씩
 app.get('/dress/:id', async (req, res)=>{
     const params = req.params;
@@ -62,8 +61,6 @@ app.get('/dress/:type', async (req, res)=>{
         }
     )
 })
-
-// 카트 
 
 
 
