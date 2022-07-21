@@ -108,57 +108,82 @@ app.post('/register', async (req,res,next) =>{
     res.end()
 })
 //4. 로그인
-app.get('/Login', (req, res) => {
-    res.send({data: 'data'})        // 임시로 값 넣어주기
-})
-//
-const util = require('util');
-app.post('/onLogin', (req, res) => {
-    console.log(`= = = > req : ${util.inspect(req)} `)
-    //query: 'userid=ffff&pw=ggggg' 로그인페이지에 작성한 아이디랑 비번이 서버터미널 쿼리에 잘 담김
-    // user_id, user_pw 변수로 선언
-    const user_id = req.query.userid;
-    const user_pw = req.query.pw;
-    // 입력된 id 와 동일한 id 가 mysql 에 있는 지 확인
-    const sql1 = 'SELECT COUNT(*) AS result FROM member WHERE userid = ? AND pw = ?'
-    const params = [user_id, user_pw]
-    connection.query(sql1, params , function(err, data){
-        if(data[0].result < 1){
-            res.send({'msg': '입력하신 id와 pw가 일치하지 않습니다.'})
-        }else {
-            res.send(data[0]);
+app.post('/login', (req, res) => {
+    const username = req.body.username;
+    const userpassword = req.body.userpassword;
+    console.log(req.body)
+    connection.query('SELECT * FROM member WHERE userid = ? AND pw = ?',
+    [username, userpassword],
+    (err,result)=>{
+        if(err) {
+            console.log(err);
+            res.send({ err: err });
         }
-    })
-    // connection.query(sql1, user_id, (err, data) => {
-    //     if(!err) {
-    //         // 결과값이 1보다 작다면(동일한 id가 없다면)(id가 없음)
-    //         if(data[0].result < 1){
-    //             res.send({ 'msg' : '입력하신 id가 일치하지 않습니다.' })
-    //         } else {    // 동일한 id가 있으면 비밀번호 일치 확인
-    //             const sql2 = `SELECT 
-    //             CASE (SELECT COUNT(*) FROM member WHERE userid = ? AND pw = ?)
-    //                 WHEN '0' THEN NULL
-    //                 ELSE (SELECT userid FROM member WHERE userid = ? AND pw = ?)
-    //             END AS userId
-    //             , CASE (SELECT COUNT(*) FROM member WHERE userid = ? AND pw = ?)
-    //                 WHEN '0' THEN NULL
-    //                 ELSE (SELECT pw FROM member WHERE userid = ? AND pw = ?)
-    //             END AS userPw`;
-    //             // sql 란에 필요한 parameter 값을 순서대로 기재
-    //             const params = [user_id, user_pw, user_id, user_pw, user_id, user_pw, user_id, user_pw]
-    //             db.query(sql2, params, (err, data) => {
-    //                 if(!err) {
-    //                     res.send(data[0])
-    //                 } else {
-    //                     res.send(err)
-    //                 }
-    //             })
-    //         }
-    //     } else {
-    //         res.send(err);
-    //     }
-    // })
-})
+        if(result) {
+            res.send(result);
+            console.log('성공')
+        } else {
+            res.send({ message: "Wrong userid/password combination!" });
+        }
+    });
+});
+
+
+
+
+
+
+// app.get('/Login', (req, res) => {
+//     res.send({data: 'data'})        // 임시로 값 넣어주기
+// })
+// //
+// const util = require('util');
+// app.post('/onLogin', (req, res) => {
+//     console.log(`= = = > req : ${util.inspect(req)} `)
+//     //query: 'userid=ffff&pw=ggggg' 로그인페이지에 작성한 아이디랑 비번이 서버터미널 쿼리에 잘 담김
+//     // user_id, user_pw 변수로 선언
+//     const user_id = req.query.userid;
+//     const user_pw = req.query.pw;
+//     // 입력된 id 와 동일한 id 가 mysql 에 있는 지 확인
+//     const sql1 = 'SELECT COUNT(*) AS result FROM member WHERE userid = ? AND pw = ?'
+//     const params = [user_id, user_pw]
+//     connection.query(sql1, params , function(err, data){
+//         if(data[0].result < 1){
+//             res.send({'msg': '입력하신 id와 pw가 일치하지 않습니다.'})
+//         }else {
+//             res.send(data[0]);
+//         }
+//     })
+//     // connection.query(sql1, user_id, (err, data) => {
+//     //     if(!err) {
+//     //         // 결과값이 1보다 작다면(동일한 id가 없다면)(id가 없음)
+//     //         if(data[0].result < 1){
+//     //             res.send({ 'msg' : '입력하신 id가 일치하지 않습니다.' })
+//     //         } else {    // 동일한 id가 있으면 비밀번호 일치 확인
+//     //             const sql2 = `SELECT 
+//     //             CASE (SELECT COUNT(*) FROM member WHERE userid = ? AND pw = ?)
+//     //                 WHEN '0' THEN NULL
+//     //                 ELSE (SELECT userid FROM member WHERE userid = ? AND pw = ?)
+//     //             END AS userId
+//     //             , CASE (SELECT COUNT(*) FROM member WHERE userid = ? AND pw = ?)
+//     //                 WHEN '0' THEN NULL
+//     //                 ELSE (SELECT pw FROM member WHERE userid = ? AND pw = ?)
+//     //             END AS userPw`;
+//     //             // sql 란에 필요한 parameter 값을 순서대로 기재
+//     //             const params = [user_id, user_pw, user_id, user_pw, user_id, user_pw, user_id, user_pw]
+//     //             db.query(sql2, params, (err, data) => {
+//     //                 if(!err) {
+//     //                     res.send(data[0])
+//     //                 } else {
+//     //                     res.send(err)
+//     //                 }
+//     //             })
+//     //         }
+//     //     } else {
+//     //         res.send(err);
+//     //     }
+//     // })
+// })
 //5. 로그아웃
 
 
@@ -275,20 +300,32 @@ app.post('/onLogin', (req, res) => {
 // //     }
 // // })
 
+// ** 관리자 권한으로 로그인시에만 등록/삭제/수정 되게 나중에 할거임..!
 //6. 상품등록
-app.post('/upload', async (req, res) => {
+app.post('/uploadDress', async (req, res) => {
     const { c_name, c_price, c_size1, c_size2, c_size3, c_type, c_desc1, c_desc2, c_pic1, c_pic2, c_pic3 } = req.body;
     console.log(req.body)
     connection.query("INSERT INTO dress_table(`name`,`price`,`size1`,`size2`,`size3`,`type`,`desc`,`desc2`,`imgsrc`,`imgsrc2`,`imgsrc3`) values(?,?,?,?,?,?,?,?,?,?,?)",
     [c_name,c_price,c_size1,c_size2,c_size3,c_type,c_desc1,c_desc2,c_pic1,c_pic2,c_pic3],
     (err, result, fields)=>{
         if(result){
+            // [c_pic1] = value.replace('C:\\fakepath\\','images/'); 
             console.log(result);
             res.send("드레스 등록이 완료되었습니다.");
         }
        
     })
 })
+//7. 상품삭제
+app.delete('/delDress/:id', async (req, res)=>{
+    const params = req.params;
+    console.log("상품 삭제");
+    connection.query(`delete from dress_table where id = ${params.id}`,
+    (err, rows, fields) => {
+        res.send(rows);
+    })    
+})
+//8. 상품수정
 
 // 서버실행
 app.listen(port, () => {
