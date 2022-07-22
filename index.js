@@ -33,7 +33,7 @@ app.get('/dresses', async (req, res)=>{
         (err, rows, fields)=>{
             res.send(rows);
             console.log(err);
-            console.log(fields);
+            // console.log(fields);
         }
     )
 })
@@ -45,10 +45,51 @@ app.get('/dress/:id', async (req, res)=>{
         `select * from dress_table where id=${params.id}`,
         (err, rows, fields)=>{
             res.send(rows);
-            console.log(fields);
+            // console.log(fields);
         }
     )
 })
+
+//카트 전체
+// app.get('/carts', async (req, res)=>{
+//     connection.query(
+//         "select * from cart_table",
+//         (err, rows, fields)=>{
+//             res.send(rows);
+//             console.log(err);
+//             // console.log(fields);
+//         }
+//     )
+// })
+
+// 카트 
+app.get('/cart', async (req, res)=>{
+    const params = req.params;
+    connection.query(
+        `select * from cart_table`,
+        (err, rows, fields)=>{
+            res.send(rows);
+            console.log(err);
+            // console.log(fields);
+        }
+    )
+})
+
+// 카트 등록
+app.post('/addToCart', async (req, res) => {
+    const { c_img, c_name, c_price, c_size, c_amount, c_userid } = req.body;
+    console.log(req.body)
+    connection.query("INSERT INTO cart_table(`imgsrc`,`name`,`price`,`size`,`amount`,`userid`) values(?,?,?,?,?,?)",
+    [c_img,c_name,c_price,c_size,c_amount,c_userid],
+    (err, result, fields)=>{
+        if(result){
+            console.log(result);
+            res.send("카트 등록이 완료되었습니다.");
+        }
+       
+    })
+})
+
 
 //서치 타입
 app.get('/dress/:type', async (req, res)=>{
@@ -150,154 +191,9 @@ app.post('/onLogin', (req, res) => {
             res.send(data[0]);
         }
     })
-    // connection.query(sql1, user_id, (err, data) => {
-    //     if(!err) {
-    //         // 결과값이 1보다 작다면(동일한 id가 없다면)(id가 없음)
-    //         if(data[0].result < 1){
-    //             res.send({ 'msg' : '입력하신 id가 일치하지 않습니다.' })
-    //         } else {    // 동일한 id가 있으면 비밀번호 일치 확인
-    //             const sql2 = `SELECT 
-    //             CASE (SELECT COUNT(*) FROM member WHERE userid = ? AND pw = ?)
-    //                 WHEN '0' THEN NULL
-    //                 ELSE (SELECT userid FROM member WHERE userid = ? AND pw = ?)
-    //             END AS userId
-    //             , CASE (SELECT COUNT(*) FROM member WHERE userid = ? AND pw = ?)
-    //                 WHEN '0' THEN NULL
-    //                 ELSE (SELECT pw FROM member WHERE userid = ? AND pw = ?)
-    //             END AS userPw`;
-    //             // sql 란에 필요한 parameter 값을 순서대로 기재
-    //             const params = [user_id, user_pw, user_id, user_pw, user_id, user_pw, user_id, user_pw]
-    //             db.query(sql2, params, (err, data) => {
-    //                 if(!err) {
-    //                     res.send(data[0])
-    //                 } else {
-    //                     res.send(err)
-    //                 }
-    //             })
-    //         }
-    //     } else {
-    //         res.send(err);
-    //     }
-    // })
 })
-//5. 로그아웃
-
-
-
-
-// app.post('/', function (req, res, next){
-//     let id = req.body.c_id;
-//     let pw = req.body.c_password;
-     
-//     // connection.query('Select salt, pw From member where userid="id";',
-//     connection.query('Select pw From member where userid="id";',
-//         function(err, rows){
-//             if(err) console.log(err);
-//             else {
-//                 if(rows.length == 0){
-//                     console.log("아이디 틀림")
-//                     res.redirect('/Login')
-//                 }
-//                 else {
-//                     // let salt = rows[0].salt;
-//                     let password = rows[0].pw;
-//                     // console.log(rows[0].pw);
-//                     // 비밀번호 보안
-//                     // const hashPassword = crypto.createHash('sha512').update(pw + salt).digest('hex');
-//                     const hashPassword = crypto.createHash('sha512').update(pw).digest('hex');
-//                     if(password === hashPassword){  //로그인성공
-//                         console.log("로그인성공");
-//                         res.cookie("user", id, {
-//                             expires: new Date(Date.now() + 900000),     //로그인지속시간: 로그인이 성공했을 시에 cookieparser를 사용하여 현재시간으로부터 900000ms 동안 지속되는 쿠키를 생성
-//                             httpOnly: true
-//                         });
-//                         res.redirect('/')
-//                     }
-//                     else {
-//                         console.log("로그인 실패 비밀번호 틀림")
-//                         res.redirect('/Login')
-//                     }
-//                 }
-//             }
-//         }
-//     )
-// })
-// //
-// app.post('/Login', (req, res, next) => {
-//     param = [ req.body.c_id, req.body.c_pw]
-//     connection.query('SELECT * FROM member WHERE userid=?', param[0], 
-//     (err, rows)=>{
-//         if(err) console.log(err);
-//         if(rows.length > 0 ){   //ID 존재
-//             // console.log("ID가 존재합니다.")
-//             //비밀번호가 맞는지 - bcrypt 에서 지원하는 compare함수 이용
-//             bcrypt.compare(param[1], rows[0].pw, 
-//                 (err, result)=>{
-//                     if(result){     // 성공
-//                         req.session.loginData = rows;
-//                         req.session.save(error => {
-//                             if(error) console.log(error)
-//                         })
-//                         res.json({message: 'success'})
-//                     }else {         // 실패
-//                         res.json({message: 'fail'})
-//                     }
-//                 })
-
-//         }else {
-//             console.log("ID가 존재하지 않습니다.")
-//         }
-//     })
-//     res.end();
-// })
-// // 로그아웃
-// app.post('/Logout', (req,res) =>{
-//     if(req.session.loginData){
-//         req.session.destroy(error => {if(error) console.log(error) })
-//     }else{
-//         /* 세션정보가 없을때 */
-//     }
-// })
-// // 미들웨어 설정
-// app.use(cors({
-//     origin: true,       // origin : 흔히 알고있는 도메인의 형태를 띄는데 이것들을 모두 허용해준다는 뜻으로 true를 작성한다. (true나 특정 url을 적어두기)
-//     credentials: true   // 교차 출처 리소스 공유 (CORS)
-// }))
-// app.use(cookieParser());    // 쿠키 추출
-// app.use(
-//     session({
-//         key: "loginData",
-//         secret: "testSecret",
-//         resave: false,
-//         saveUninitialized: false,
-//         cookie: {
-//             expires: 60 * 60 * 24       // 쿠키 지속시간
-//         },
-//     })
-// )
-// // // Auto Check
-// // app.get('/loginCheck', (req,res) =>{
-// //     if(req.session.loginData){
-// //         res.send({loggedIn : true, loginData: req.session.loginData})
-// //     }else{
-// //         res.send({loggedIn : false})
-// //     }
-// // })
-// // 로그인 로그아웃
-// // app.post('/Login', (req, res)=>{
-// //     if(){       //로그인 성공
-// //         req.session.loginData = 
-// //         req.session.save(error => {
-// //             if(error) console.log(error)
-// //         })
-// //         res.json({message: 'success'})
-// //     }else { //로그인실패
-// //         res.json({message: 'fail'})
-// //     }
-// // })
-
 //6. 상품등록
-app.post('/upload', async (req, res) => {
+app.post('/uploadDress', async (req, res) => {
     const { c_name, c_price, c_size1, c_size2, c_size3, c_type, c_desc1, c_desc2, c_pic1, c_pic2, c_pic3 } = req.body;
     console.log(req.body)
     connection.query("INSERT INTO dress_table(`name`,`price`,`size1`,`size2`,`size3`,`type`,`desc`,`desc2`,`imgsrc`,`imgsrc2`,`imgsrc3`) values(?,?,?,?,?,?,?,?,?,?,?)",
