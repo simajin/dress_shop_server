@@ -24,12 +24,12 @@ const connection = mysql.createConnection({
 })
 
 app.use(express.json()) //json형식의 데이터를 처리할수 있도록설정
-// app.use(cors()) //브라우저의 다양한 사용을 위해 설정
+app.use(cors()) //브라우저의 다양한 사용을 위해 설정
 //로그인 - 쿠키 사용
 //미들웨어 설정
 app.use(cors({
     // origin: ["http://localhost:3000"],
-    origin: ["http://dress-shop-server.herokuapp.com"],
+    origin: ["https://dress-shop-server.herokuapp.com"],
     methods: ["GET","POST","DELETE","PUT"],
     // methods: ["GET","POST"],
     credentials: true
@@ -205,7 +205,6 @@ app.post('/register', async (req,res,next) =>{
                     console.log("가입완료")
                 }
             }) 
-
         })
     res.end()
 })
