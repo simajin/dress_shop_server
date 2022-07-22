@@ -18,6 +18,7 @@
     "express": "^4.18.1",
     "express-session": "^1.17.3",
     "mysql": "^2.18.1",
+    "react-cookie": "^4.1.1",
     "salt": "^0.5.5"
   }
 }
