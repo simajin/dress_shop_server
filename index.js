@@ -24,11 +24,12 @@ const connection = mysql.createConnection({
 })
 
 app.use(express.json()) //json형식의 데이터를 처리할수 있도록설정
-// app.use(cors()) //브라우저의 다양한 사용을 위해 설정
+app.use(cors()) //브라우저의 다양한 사용을 위해 설정
 //로그인 - 쿠키 사용
 //미들웨어 설정
 app.use(cors({
-    origin: ["http://localhost:3000"],
+    // origin: ["http://localhost:3000"],
+    origin: ["https://dress-shop-server.herokuapp.com"],
     methods: ["GET","POST","DELETE","PUT"],
     // methods: ["GET","POST"],
     credentials: true
@@ -142,9 +143,6 @@ app.get('/dress/:type', async (req, res)=>{
 })
 
 
-
-const bcrypt = require('bcrypt')
-const saltRounds = 10       // saltRounds : 암호화를 몇번 진행할 것인지
 //3. 회원가입 - 클라이언트에서 값을 받아오기
 // db(데이터베이스)에 회원정보 업로드되게 하기
 // const db = require('./database.json')
@@ -284,29 +282,6 @@ app.post('/logout', (req,res) =>{
 
 
 // ** 관리자 권한으로 로그인시에만 등록/삭제/수정 되게 나중에 할거임..!
-//4. 로그인
-app.get('/Login', (req, res) => {
-    res.send({data: 'data'})        // 임시로 값 넣어주기
-})
-//
-const util = require('util');
-app.post('/onLogin', (req, res) => {
-    console.log(`= = = > req : ${util.inspect(req)} `)
-    //query: 'userid=ffff&pw=ggggg' 로그인페이지에 작성한 아이디랑 비번이 서버터미널 쿼리에 잘 담김
-    // user_id, user_pw 변수로 선언
-    const user_id = req.query.userid;
-    const user_pw = req.query.pw;
-    // 입력된 id 와 동일한 id 가 mysql 에 있는 지 확인
-    const sql1 = 'SELECT COUNT(*) AS result FROM member WHERE userid = ? AND pw = ?'
-    const params = [user_id, user_pw]
-    connection.query(sql1, params , function(err, data){
-        if(data[0].result < 1){
-            res.send({'msg': '입력하신 id와 pw가 일치하지 않습니다.'})
-        }else {
-            res.send(data[0]);
-        }
-    })
-})
 //6. 상품등록
 app.post('/uploadDress', async (req, res) => {
     const { c_name, c_price, c_size1, c_size2, c_size3, c_type, c_desc1, c_desc2, c_pic1, c_pic2, c_pic3 } = req.body;
