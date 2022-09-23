@@ -29,6 +29,9 @@ const connection = mysql.createConnection({
 app.use(express.json()) //json형식의 데이터를 처리할수 있도록설정
 app.use(cors()) //브라우저의 다양한 사용을 위해 설정
 
+//get으로 불러올 수 있는 애를
+// https://dress-shop-server.herokuapp.com/dresses  --> heroku로 하면 뜸!!!
+
 //1. 전체상품
 app.get('/dresses', async (req, res)=>{
     connection.query(
