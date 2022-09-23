@@ -198,9 +198,31 @@ app.post("/shopImg3", upload.single("c_pic3"), function(req, res, next){
     })
     console.log(req.file.filename);
 })
+app.post("/shopImg4", upload.single("c_pic4"), function(req, res, next){
+    res.send({
+        imgsrc4: 'shopImg/' + req.file.filename,
+    })
+    console.log(req.file.filename);
+})
+app.post("/shopImg5", upload.single("c_pic5"), function(req, res, next){
+    res.send({
+        imgsrc5: 'shopImg/' + req.file.filename,
+    })
+    console.log(req.file.filename);
+})
+app.post("/shopImg6", upload.single("c_pic6"), function(req, res, next){
+    res.send({
+        imgsrc6: 'shopImg/' + req.file.filename,
+    })
+    console.log(req.file.filename);
+})
 app.use("/shopImg",express.static("shopImg"))
 app.use("/shopImg2",express.static("shopImg"))
 app.use("/shopImg3",express.static("shopImg"))
+app.use("/shopImg4",express.static("shopImg"))
+app.use("/shopImg5",express.static("shopImg"))
+app.use("/shopImg6",express.static("shopImg"))
+
 
 
 // ** 관리자 권한으로 로그인시에만 등록/삭제/수정 되게 나중에 할거임..!
