@@ -64,10 +64,11 @@ app.get('/dress/:id', async (req, res)=>{
 // })
 
 // 카트 
-app.get('/cart', async (req, res)=>{
+app.get('/cart/:id', async (req, res)=>{
     const params = req.params;
+    const { id } = params;  //userid마다 장바구니 구분
     connection.query(
-        `select * from cart_table`,
+        `select * from cart_table where userid='${id}' `,
         (err, rows, fields)=>{
             res.send(rows);
             console.log(err);
@@ -120,7 +121,7 @@ app.post("/join",async (req, res)=>{
         bcrypt.genSalt(saltRounds, function(err,salt){
             bcrypt.hash(myPlanintextPass,salt, function(err,hash){
                 myPass = hash;
-                const { c_id, c_password, c_name, c_gender, c_phone, c_phone2, c_phone3, c_add, c_adddetail, c_email } = req.body;
+                const { c_id, c_name, c_gender, c_phone, c_phone2, c_phone3, c_add, c_adddetail, c_email } = req.body;
                 console.log(req.body)
                 connection.query("insert into member(`userid`, `pw`, `username`, `gender`, `phone`, `phone2`, `phone3`, `add1`, `adddetail`, `email`) values(?,?,?,?,?,?,?,?,?,?)",
                     [c_id, myPass, c_name, c_gender, c_phone, c_phone2, c_phone3, c_add, c_adddetail, c_email] ,
@@ -133,6 +134,39 @@ app.post("/join",async (req, res)=>{
         })
     }   
 })
+// 예시용 만든 계정 -> id: didi / pw: 1234   // dddd / 1234
+// 관리자 계정 -> admin / admin1234
+
+// 로그인 요청
+app.post('/login', async (req, res)=> {
+    const { c_id, c_password } = req.body;  
+    connection.query(`select * from member where userid = '${c_id}'`,
+        (err, rows, fileds)=>{
+            if(rows != undefined) {     //결과가 있을 때
+                if(rows[0] == undefined) {
+                    // res.send(null)
+                    res.send("실패1");
+                    // console.log(err);
+                } else {
+                    // Load hash from your password DB.
+                    //https://www.npmjs.com/package/bcrypt 에서 긁어오기
+                    bcrypt.compare(c_password, rows[0].pw, function(err, result) {  //rows[0].pw : hash자리  --> 암호화한 비번
+                        // result == true
+                        if(result == true) {
+                            res.send(rows[0])
+                        } else {
+                            console.log(err);
+                            res.send('실패2')
+                        }
+                    });
+                }
+            } else {
+                res.send('실패')
+            }
+        }
+    )
+})
+
 
 //멀터 - 이미지 업로드
 const storage = multer.diskStorage({
