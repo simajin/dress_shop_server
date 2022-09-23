@@ -1,7 +1,7 @@
 const express = require("express"); //express : react와 mysql을 연결해주는 웹 서버 프레임워크
 const cors = require("cors");
 const app = express();
-const port =  process.env.PORT || 8000;
+const port =  process.env.PORT || 8000; //헤로쿠에서 지정하는게 있다면 그걸 쓰고 없다면 8000번 사용
 const fs = require('fs');
 const dataj = fs.readFileSync("./database.json");
 const parseData = JSON.parse(dataj);
@@ -64,11 +64,11 @@ app.get('/dress/:id', async (req, res)=>{
 // })
 
 // 카트 
-app.get('/cart/:id', async (req, res)=>{
+app.get('/cart/:ids', async (req, res)=>{
     const params = req.params;
-    const { id } = params;  //userid마다 장바구니 구분
+    const { ids } = params;  //userid마다 장바구니 구분
     connection.query(
-        `select * from cart_table where userid='${id}' `,
+        `select * from cart_table where userid='${ids}' `,
         (err, rows, fields)=>{
             res.send(rows);
             console.log(err);
@@ -80,16 +80,25 @@ app.get('/cart/:id', async (req, res)=>{
 // 카트 등록
 app.post('/addToCart', async (req, res) => {
     const { c_img, c_name, c_price, c_size, c_amount, c_userid } = req.body;
-    console.log(req.body)
-    connection.query("INSERT INTO cart_table(`imgsrc`,`name`,`price`,`size`,`amount`,`userid`) values(?,?,?,?,?,?)",
-    [c_img,c_name,c_price,c_size,c_amount,c_userid],
-    (err, result, fields)=>{
-        if(result){
-            console.log(result);
-            res.send("카트 등록이 완료되었습니다.");
+    console.log(req.body);
+    connection.query(
+        `select * from cart_table where userid='${c_userid}' and name='${c_name}'`,
+        (err, rows, fields)=>{
+            if(rows.length == 1) {
+                res.send('있음');
+            } else {
+                connection.query(
+                    "INSERT INTO cart_table(`imgsrc`,`name`,`price`,`size`,`amount`,`userid`) values(?,?,?,?,?,?)",
+                [c_img,c_name,c_price,c_size,c_amount,c_userid],
+                (err, result, fields)=>{
+                    if(result){
+                        console.log(result);
+                        res.send("카트 등록이 완료되었습니다.");
+                    }
+                })
+            }
         }
-       
-    })
+    )
 })
 // 카트 삭제
 app.delete('/delCart', async (req, res)=>{
