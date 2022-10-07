@@ -82,7 +82,7 @@ app.get('/cart/:ids', async (req, res)=>{
 
 // 카트 등록
 app.post('/addToCart', async (req, res) => {
-    const { c_img, c_name, c_price, c_size, c_amount, c_userid } = req.body;
+    const { c_img, c_name, c_price, c_size, c_amount, c_userid, c_productid } = req.body;
     console.log(req.body);
     connection.query(
         `select * from cart_table where userid='${c_userid}' and name='${c_name}'`,
@@ -91,10 +91,11 @@ app.post('/addToCart', async (req, res) => {
                 res.send('있음');
             } else {
                 connection.query(
-                    "INSERT INTO cart_table(`imgsrc`,`name`,`price`,`size`,`amount`,`userid`) values(?,?,?,?,?,?)",
-                [c_img,c_name,c_price,c_size,c_amount,c_userid],
+                    "INSERT INTO cart_table(`imgsrc`,`name`,`price`,`size`,`amount`,`userid`,`productid`) values(?,?,?,?,?,?,?)",
+                [c_img,c_name,c_price,c_size,c_amount,c_userid,c_productid],
                 (err, result, fields)=>{
                     if(result){
+                        console.log(fields);
                         console.log(result);
                         res.send("카트 등록이 완료되었습니다.");
                     }
