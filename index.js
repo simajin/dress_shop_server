@@ -88,6 +88,8 @@ app.post('/addToCart', async (req, res) => {
         `select * from cart_table where userid='${c_userid}' and name='${c_name}'`,
         (err, rows, fields)=>{
             if(rows.length == 1) {
+                console.log(req.body);
+                console.log(rows);
                 res.send('있음');
             } else {
                 connection.query(
