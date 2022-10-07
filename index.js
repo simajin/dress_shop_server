@@ -146,8 +146,8 @@ app.post("/join",async (req, res)=>{
         })
     }   
 })
-// 예시용 만든 계정 -> id: didi / pw: 1234   // dddd / 1234
-// 관리자 계정 -> admin / admin1234
+// 🧑예시용 만든 계정 -> id: didi / pw: 1234   // dddd / 1234
+// 👧관리자 계정 -> admin / admin1234
 
 // 로그인 요청
 app.post('/login', async (req, res)=> {
