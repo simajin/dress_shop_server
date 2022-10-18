@@ -78,6 +78,7 @@ app.get('/cart/:ids', async (req, res)=>{
             // console.log(fields);
         }
     )
+
 })
 
 // 카트 등록
